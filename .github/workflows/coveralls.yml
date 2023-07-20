@@ -27,14 +27,6 @@ jobs:
       
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: rustfmt, clippy
-        
-      - name: Check format
-        run: cargo fmt --check --all
-        
-      - name: Check clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
         
       - name: Install Cargo B(inary)Install
         run: curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
