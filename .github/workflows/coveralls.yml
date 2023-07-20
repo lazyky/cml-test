@@ -5,40 +5,8 @@ on:
     branches:
       - main
 
-jobs:
-#   setup-rust:
-#     runs-on: ubuntu-latest
-    
-#     steps:
-#       - name: Install Rust toolchain
-#         uses: dtolnay/rust-toolchain@nightly
-
-  setup-tarpaulin:
-#     needs: setup-rust
-    runs-on: ubuntu-latest
-    
-    steps:
-      - uses: taiki-e/install-action@cargo-tarpaulin
-    
-  setup-taos:
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Cache taosc
-        uses: actions/cache@v3
-        with:
-          key: taosc
-          path: TDengine-client-3.0.7.1
-    
-      - name: Install taosc
-        run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
-          cd TDengine-client-3.0.7.1
-          ./install_client.sh
-          
+jobs:       
   coverage:
-    needs: [setup-tarpaulin, setup-taos]
     runs-on: ubuntu-latest
     
     services:
@@ -51,6 +19,21 @@ jobs:
       - uses: actions/checkout@v3
       
       - uses: dtolnay/rust-toolchain@nightly
+      
+      - uses: taiki-e/install-action@cargo-tarpaulin
+      
+      - name: Cache taosc
+        uses: actions/cache@v3
+        with:
+          key: taosc
+          path: TDengine-client-3.0.7.1
+    
+      - name: Install taosc
+        run: |
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
+          tar zxf TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
+          cd TDengine-client-3.0.7.1
+          ./install_client.sh
             
       - name: Coverage
         run: cargo +nightly tarpaulin --follow-exec --post-test-delay 10 --coveralls ${{ secrets.COVERALLS_REPO_TOKEN }} -- --test-threads=1
