@@ -13,12 +13,11 @@ jobs:
       - uses: actions/checkout@v3
       
       - name: Get taos version
-        run: |
-          file_content=$(cat TAOSVERSION)
-          echo "::set-env name=TAOS_VERSION::$file_content"
+        id: gettaosversion
+        run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
           
       - name: Start service
-        run: docker run -d --name taosd -p 6030:6030 tdengine/tdengine:${{ env.TAOS_VERSION }}
+        run: docker run -d --name taosd -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }}
       
       - uses: dtolnay/rust-toolchain@nightly
       
@@ -28,13 +27,13 @@ jobs:
         uses: actions/cache@v3
         with:
           key: taosc
-          path: TDengine-client-${{ env.TAOS_VERSION }}
+          path: TDengine-client-${{ steps.gettaosversion.outputs.version }}
     
       - name: Install taosc
         run: |
           curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-${{ env.TAOS_VERSION }}-Linux-x64-Lite.tar.gz
-          cd TDengine-client-${{ env.TAOS_VERSION }}
+          tar zxf TDengine-client-${{ steps.gettaosversion.outputs.version }}-Linux-x64-Lite.tar.gz
+          cd TDengine-client-${{ steps.gettaosversion.outputs.version }}
           ./install_client.sh
             
       - name: Coverage
