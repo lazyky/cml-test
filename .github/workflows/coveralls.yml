@@ -6,15 +6,15 @@ on:
       - main
 
 jobs:
-  setup-rust:
-    runs-on: ubuntu-latest
+#   setup-rust:
+#     runs-on: ubuntu-latest
     
-    steps:
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
+#     steps:
+#       - name: Install Rust toolchain
+#         uses: dtolnay/rust-toolchain@nightly
 
   setup-tarpaulin:
-    needs: setup-rust
+#     needs: setup-rust
     runs-on: ubuntu-latest
     
     steps:
@@ -38,7 +38,7 @@ jobs:
           ./install_client.sh
           
   coverage:
-    needs: [setup-rust, setup-tarpaulin, setup-taos]
+    needs: [setup-tarpaulin, setup-taos]
     runs-on: ubuntu-latest
     
     services:
@@ -49,6 +49,8 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
+      
+      - uses: dtolnay/rust-toolchain@nightly
             
       - name: Coverage
         run: cargo +nightly tarpaulin --follow-exec --post-test-delay 10 --coveralls ${{ secrets.COVERALLS_REPO_TOKEN }} -- --test-threads=1
