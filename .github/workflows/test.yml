@@ -5,7 +5,39 @@ on:
     types: [opened, synchronize]
     
 jobs:
+  setup-rust:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rustfmt, clippy
+    
+  setup-taos:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Install taosc
+        run: |
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
+          tar zxf TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
+          cd TDengine-client-3.0.7.1
+          ./install_client.sh
+          
+  check:
+    needs: setup-rust
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Check format
+        run: cargo fmt --check --all
+        
+      - name: Check clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+  
   tests:
+    needs: [setup-rust, setup-taos]
     runs-on: ubuntu-latest
     
     services:
@@ -16,24 +48,6 @@ jobs:
     
     steps:
       - uses: actions/checkout@v3
-  
-      - name: Install taosc
-        run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
-          cd TDengine-client-3.0.7.1
-          ./install_client.sh
-        
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@nightly
-        with:
-          components: rustfmt, clippy
-        
-      - name: Check format
-        run: cargo fmt --check --all
-        
-      - name: Check clippy
-        run: cargo clippy --all-targets --all-features -- -D warnings
         
       - name: Test
         run: cargo test
