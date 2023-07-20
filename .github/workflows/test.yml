@@ -18,6 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
+      - name: Cache taosc
+        uses: actions/cache@v3
+        with:
+          key: taosc
+          path: TDengine-client-3.0.7.1
+    
       - name: Install taosc
         run: |
           curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
