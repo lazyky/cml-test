@@ -12,12 +12,12 @@ jobs:
     steps:
       - uses: taiki-e/install-action@cargo-tarpaulin
       
-#   setup-rust:
-#     runs-on: ubuntu-latest
+  setup-rust:
+    runs-on: ubuntu-latest
     
-#     steps:
-#       - name: Install Rust toolchain
-#         uses: dtolnay/rust-toolchain@nightly
+    steps:
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@nightly
     
   setup-taos:
     runs-on: ubuntu-latest
