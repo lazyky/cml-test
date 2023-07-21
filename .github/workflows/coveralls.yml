@@ -37,15 +37,20 @@ jobs:
       - uses: taiki-e/install-action@cargo-tarpaulin
       
       - name: Cache taosc
+        id: cache-taosc
         uses: actions/cache@v3
         with:
           key: taosc-${{ needs.get-taos-version.outputs.taos-version }}
           path: TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}
     
-      - name: Install taosc
+      - if: ${{ steps.cache-taosc.outputs.cache-hit != 'true' }}
+        name: Get taosc
         run: |
           curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}-Linux-x64-Lite.tar.gz
           tar zxf TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}-Linux-x64-Lite.tar.gz
+      
+      - name: Install taosc
+        run: |
           cd TDengine-client-${{ needs.get-taos-version.outputs.taos-version}}
           ./install_client.sh
             
