@@ -9,20 +9,23 @@ jobs:
   get-taos-version:
     runs-on: ubuntu-latest
     
+    outputs:
+      taos-version: ${{ steps.gettaosversion.outputs.version }}
+    
     steps:
       - name: Get taos version
-#         id: gettaosversion
+        id: gettaosversion
         run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
   
   coverage:
     needs: get-taos-version
     runs-on: ubuntu-latest
     
-#     services:
-#       tdengine:
-#         image: tdengine/tdengine:${{ needs.get-taos-version.outputs.version }}
-#         ports:
-#           - 6030:6030
+    services:
+      tdengine:
+        image: tdengine/tdengine:${{ needs.get-taos-version.outputs.taos-version }}
+        ports:
+          - 6030:6030
     
     steps:
       - uses: actions/checkout@v3
@@ -34,14 +37,14 @@ jobs:
       - name: Cache taosc
         uses: actions/cache@v3
         with:
-          key: taosc-${{ needs.get-taos-version.outputs.version }}
-          path: TDengine-client-${{ needs.get-taos-version.outputs.version }}
+          key: taosc-${{ needs.get-taos-version.outputs.taos-version }}
+          path: TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}
     
       - name: Install taosc
         run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ needs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-${{ needs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
-          cd TDengine-client-${{ needs.get-taos-version.outputs.version}}
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}-Linux-x64-Lite.tar.gz
+          tar zxf TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}-Linux-x64-Lite.tar.gz
+          cd TDengine-client-${{ needs.get-taos-version.outputs.taos-version}}
           ./install_client.sh
             
       - name: Coverage
