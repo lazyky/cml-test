@@ -11,7 +11,7 @@ jobs:
     
     steps:
       - name: Get taos version
-        id: gettaosversion
+#         id: gettaosversion
         run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
   
   coverage:
@@ -28,14 +28,14 @@ jobs:
       - name: Cache taosc
         uses: actions/cache@v3
         with:
-          key: taosc-${{ steps.gettaosversion.outputs.version }}
-          path: TDengine-client-${{ steps.gettaosversion.outputs.version }}
+          key: taosc-${{ jobs.get-taos-version.outputs.version }}
+          path: TDengine-client-${{ jobs.get-taos-version.outputs.version }}
     
       - name: Install taosc
         run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ steps.gettaosversion.outputs.version }}-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-${{ steps.gettaosversion.outputs.version }}-Linux-x64-Lite.tar.gz
-          cd TDengine-client-${{ steps.gettaosversion.outputs.version }}
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ jobs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
+          tar zxf TDengine-client-${{ jobs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
+          cd TDengine-client-${{ jobs.get-taos-version.outputs.version }}
           ./install_client.sh
             
       - name: Coverage
