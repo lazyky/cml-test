@@ -1,6 +1,9 @@
 name: Tests
 
 on:
+  push:
+    branches:
+      - test_cache
   pull_request:
     types: [opened, synchronize]
     
@@ -37,7 +40,13 @@ jobs:
         with:
           key: taosc-${{ needs.get-taos-version.outputs.taos-version }}
           path: TDengine-client-${{ needs.get-taos-version.outputs.taos-version }}
-    
+      - name: Cache cargo
+        id: cache-cargo
+        uses: actions/cache/restore@v3
+        with:
+          key: cargo
+          path: target
+          
       - if: ${{ steps.cache-taosc.outputs.cache-hit != 'true' }}
         name: Get taosc
         run: |
@@ -62,3 +71,9 @@ jobs:
         
       - name: Test
         run: cargo test -- --test-threads=1
+      - name: Save cargo
+        id: save-cargo
+        uses: actions/cache/save@v3
+        with:
+          key: cargo
+          path: target
