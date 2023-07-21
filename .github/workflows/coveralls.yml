@@ -17,7 +17,7 @@ jobs:
         run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
           
       - name: Start service
-        run: docker run -d --name taosd -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }}
+        run: docker run -d --name taosd -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }} taosd -e 'TAOS_SUPPORTVNODES=8'
       
       - uses: dtolnay/rust-toolchain@nightly
       
