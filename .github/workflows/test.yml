@@ -19,6 +19,7 @@ jobs:
         run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
   
   tests:
+    needs: get-taos-version
     runs-on: ubuntu-latest
     
     services:
