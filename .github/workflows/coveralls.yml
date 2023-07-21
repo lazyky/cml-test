@@ -17,7 +17,7 @@ jobs:
         run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
           
       - name: Start service
-        run: docker run -d --name taosd -e TAOS_SUPPORT_VNODES=8 -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }}
+        run: docker run -d --name taosd -e TAOS_SUPPORT_VNODES=128 -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }}
       
       - uses: dtolnay/rust-toolchain@nightly
       
@@ -31,10 +31,10 @@ jobs:
     
       - name: Install taosc
         run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-3.0.7.1-Linux-x64-Lite.tar.gz
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ steps.gettaosversion.outputs.version }}-Linux-x64-Lite.tar.gz
           tar zxf TDengine-client-${{ steps.gettaosversion.outputs.version }}-Linux-x64-Lite.tar.gz
           cd TDengine-client-${{ steps.gettaosversion.outputs.version }}
           ./install_client.sh
             
       - name: Coverage
-        run: cargo +nightly tarpaulin --follow-exec -j 1 --post-test-delay 10 --coveralls ${{ secrets.COVERALLS_REPO_TOKEN }} -- --test-threads=1
+        run: cargo +nightly tarpaulin --follow-exec --post-test-delay 10 --coveralls ${{ secrets.COVERALLS_REPO_TOKEN }} -- --test-threads=1
