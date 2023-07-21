@@ -28,7 +28,7 @@ jobs:
       - name: Cache taosc
         uses: actions/cache@v3
         with:
-          key: taosc
+          key: taosc-${{ steps.gettaosversion.outputs.version }}
           path: TDengine-client-${{ steps.gettaosversion.outputs.version }}
     
       - name: Install taosc
