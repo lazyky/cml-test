@@ -6,18 +6,20 @@ on:
       - main
 
 jobs:       
+  get-taos-version:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Get taos version
+        id: gettaosversion
+        run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
+  
   coverage:
+    needs: get-taos-version
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Get taos version
-        id: gettaosversion
-        run: echo "version=$(cat TAOSVERSION)" >> $GITHUB_OUTPUT
-          
-      - name: Start service
-        run: docker run -d --name taosd -e TAOS_SUPPORT_VNODES=128 -p 6030:6030 tdengine/tdengine:${{ steps.gettaosversion.outputs.version }}
       
       - uses: dtolnay/rust-toolchain@nightly
       
