@@ -21,11 +21,11 @@ jobs:
     needs: get-taos-version
     runs-on: ubuntu-latest
     
-    services:
-      tdengine:
-        image: tdengine/tdengine:${{ needs.get-taos-version.outputs.taos-version }}
-        ports:
-          - 6030:6030
+#     services:
+#       tdengine:
+#         image: tdengine/tdengine:${{ needs.get-taos-version.outputs.taos-version }}
+#         ports:
+#           - 6030:6030
     
     steps:
       - uses: actions/checkout@v3
