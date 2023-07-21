@@ -18,6 +18,12 @@ jobs:
     needs: get-taos-version
     runs-on: ubuntu-latest
     
+    services:
+      tdengine:
+        image: tdengine/tdengine:${{ needs.get-taos-version.outputs.version }}
+        ports:
+          - 6030:6030
+    
     steps:
       - uses: actions/checkout@v3
       
@@ -28,14 +34,14 @@ jobs:
       - name: Cache taosc
         uses: actions/cache@v3
         with:
-          key: taosc-${{ jobs.get-taos-version.outputs.version }}
-          path: TDengine-client-${{ jobs.get-taos-version.outputs.version }}
+          key: taosc-${{ needs.get-taos-version.outputs.version }}
+          path: TDengine-client-${{ needs.get-taos-version.outputs.version }}
     
       - name: Install taosc
         run: |
-          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ jobs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
-          tar zxf TDengine-client-${{ jobs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
-          cd TDengine-client-${{ jobs.get-taos-version.outputs.version }}
+          curl -sO https://www.taosdata.com/assets-download/3.0/TDengine-client-${{ needs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
+          tar zxf TDengine-client-${{ needs.get-taos-version.outputs.version }}-Linux-x64-Lite.tar.gz
+          cd TDengine-client-${{ needs.get-taos-version.outputs.version}}
           ./install_client.sh
             
       - name: Coverage
